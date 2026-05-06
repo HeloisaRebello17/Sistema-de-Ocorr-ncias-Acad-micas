@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Relatório Técnico — Segurança da Informação</title>
+<style>
+  @page { margin: 2.5cm 2cm; }
+  body { font-family: Arial, sans-serif; font-size: 11pt; color: #222; line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 2rem; }
+  h1 { font-size: 16pt; text-align: center; color: #1a237e; margin-bottom: 0.2rem; }
+  h2 { font-size: 13pt; color: #1a237e; border-bottom: 1.5px solid #1a237e; padding-bottom: 0.2rem; margin-top: 2rem; margin-bottom: 0.8rem; }
+  h3 { font-size: 11.5pt; color: #283593; margin-top: 1.2rem; margin-bottom: 0.4rem; }
+  .capa { text-align: center; margin-bottom: 2.5rem; }
+  .capa p { margin: 0.2rem 0; font-size: 10.5pt; color: #444; }
+  .capa .subtitulo { font-size: 13pt; font-weight: bold; margin: 0.5rem 0 0.2rem; }
+  .bloco-id { background: #f5f5f5; border: 1px solid #ddd; border-radius: 6px; padding: 1rem 1.2rem; margin-bottom: 1.5rem; font-size: 10pt; }
+  .bloco-id table { width: 100%; border-collapse: collapse; }
+  .bloco-id td { padding: 0.25rem 0.5rem; }
+  .bloco-id td:first-child { font-weight: bold; color: #555; width: 35%; }
+  table.analise { width: 100%; border-collapse: collapse; font-size: 9.5pt; margin: 1rem 0; }
+  table.analise th { background: #1a237e; color: #fff; padding: 0.5rem 0.6rem; text-align: left; }
+  table.analise td { border: 1px solid #ddd; padding: 0.45rem 0.6rem; vertical-align: top; }
+  table.analise tr:nth-child(even) td { background: #f9f9f9; }
+  .badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 10px; font-size: 8.5pt; font-weight: bold; }
+  .sim { background: #c8e6c9; color: #1b5e20; }
+  .nao { background: #ffcdd2; color: #b71c1c; }
+  .parc { background: #fff3e0; color: #e65100; }
+  .back { background: #e3f2fd; color: #0d47a1; }
+  .infra { background: #ede7f6; color: #4527a0; }
+  .aviso { background: #fff8e1; border-left: 4px solid #ffc107; padding: 0.6rem 1rem; margin: 1rem 0; font-size: 10pt; border-radius: 0 4px 4px 0; }
+  .negativo { background: #ffebee; border-left: 4px solid #f44336; padding: 0.6rem 1rem; margin: 1rem 0; font-size: 10pt; border-radius: 0 4px 4px 0; }
+  ul { margin: 0.5rem 0 0.5rem 1.5rem; }
+  li { margin-bottom: 0.3rem; }
+  .quebra { page-break-before: always; }
+  .rodape { margin-top: 3rem; font-size: 9pt; color: #888; text-align: center; border-top: 1px solid #eee; padding-top: 0.5rem; }
+  @media print {
+    body { padding: 0; }
+    .quebra { page-break-before: always; }
+  }
+</style>
+</head>
+<body>
+
+<!-- CAPA -->
+<div class="capa">
+  <p style="font-size:13pt;font-weight:bold;color:#1a237e;">Centro Universitário Católica SC</p>
+  <p>Curso de Engenharia de Software</p>
+  <p>Disciplina: Segurança da Informação</p>
+  <p>Professor: Edson Vaz Lopes</p>
+  <br>
+  <p class="subtitulo">Relatório Técnico — Atividade Prática</p>
+  <p style="font-size:14pt;font-weight:bold;color:#1a237e;margin-top:0.3rem;">Análise e Melhoria de Segurança em Sistema Web</p>
+  <br>
+  <p>Heloísa Rebello Cabral</p>
+  <p>Turma: 5B</p>
+  <p>Data: 05 de maio de 2026</p>
+</div>
+
+<!-- IDENTIFICAÇÃO -->
+<div class="bloco-id">
+  <table>
+    <tr><td>Disciplina:</td><td>Segurança da Informação</td></tr>
+    <tr><td>Integrante:</td><td>Heloísa Rebello Cabral</td></tr>
+    <tr><td>Turma:</td><td>5B</td></tr>
+    <tr><td>Data:</td><td>05 de maio de 2026</td></tr>
+    <tr><td>Repositório:</td><td><em>[inserir link do GitHub]</em></td></tr>
+    <tr><td>Sistema publicado:</td><td><em>[inserir link do GitHub Pages]</em></td></tr>
+  </table>
+</div>
+
+<!-- 2. DESCRIÇÃO DO SISTEMA -->
+<h2>2. Descrição Resumida do Sistema</h2>
+<p>O sistema analisado é um protótipo web para registro de ocorrências acadêmicas em uma instituição de ensino. Sua finalidade é permitir o registro, a consulta e a exportação de eventos relacionados a alunos, como ocorrências disciplinares, acadêmicas, de saúde, administrativas e familiares.</p>
+<p>O sistema apresenta as seguintes funcionalidades principais:</p>
+<ul>
+  <li>Tela de login com usuário e senha;</li>
+  <li>Cadastro de ocorrências com dados do aluno (nome, CPF, matrícula, turma, tipo, descrição e gravidade);</li>
+  <li>Listagem de ocorrências registradas;</li>
+  <li>Visualização de perfis de usuário;</li>
+  <li>Área de logs de ações;</li>
+  <li>Exportação de dados nos formatos JSON e CSV.</li>
+</ul>
+<p>O sistema prevê três perfis de usuário: <strong>administrador</strong>, <strong>professor</strong> e <strong>aluno</strong>. Entretanto, na versão original, as diferenças entre esses perfis não são enforçadas de forma real.</p>
+<div class="aviso">⚠️ <strong>Importante:</strong> O sistema não possui back-end, API ou banco de dados real. Toda a lógica de negócio, autenticação, armazenamento e controle de acesso ocorre exclusivamente no navegador do usuário (front-end), utilizando JavaScript e localStorage.</div>
+
+<!-- 3. REGRAS DE NEGÓCIO -->
+<h2>3. Regras de Negócio Percebidas</h2>
+<p>A partir da análise do código-fonte, identificaram-se as seguintes regras de negócio simuladas no protótipo:</p>
+<ul>
+  <li>Somente usuários com credenciais válidas (verificadas no front-end) podem acessar o sistema;</li>
+  <li>Qualquer perfil autenticado pode cadastrar, visualizar e exportar ocorrências — não há separação real de permissões;</li>
+  <li>Professores e administradores deveriam ter acesso amplo; alunos deveriam ver apenas suas próprias ocorrências;</li>
+  <li>A área de logs deveria ser restrita a administradores;</li>
+  <li>A exportação de dados deveria ser restrita a administradores e professores;</li>
+  <li>Ocorrências de gravidade crítica recebem destaque visual diferenciado;</li>
+  <li>Ações como login, logout e cadastro são registradas em log — porém apenas no localStorage.</li>
+</ul>
+<p>Todas essas regras estão implementadas exclusivamente no JavaScript do front-end, o que significa que qualquer usuário com conhecimento técnico pode inspecioná-las, modificá-las ou contorná-las pelo console do navegador.</p>
+
+<!-- 4. IDENTIFICAÇÃO DOS ATIVOS -->
+<h2>4. Identificação dos Ativos</h2>
+<table class="analise">
+  <tr><th>#</th><th>Ativo identificado</th><th>Por que tem valor?</th></tr>
+  <tr><td>1</td><td>Dados pessoais dos alunos (nome, CPF, matrícula)</td><td>Dados protegidos pela LGPD. Seu vazamento pode causar danos à privacidade, discriminação ou fraudes.</td></tr>
+  <tr><td>2</td><td>Registros de ocorrências acadêmicas</td><td>Contêm informações sensíveis sobre situações disciplinares, de saúde e familiares. Exposição indevida pode prejudicar o aluno.</td></tr>
+  <tr><td>3</td><td>Credenciais de acesso (usuário e senha)</td><td>Permitem acesso ao sistema. Comprometimento permite impersonação e acesso não autorizado a todos os dados.</td></tr>
+  <tr><td>4</td><td>Logs de ações</td><td>Essenciais para rastreabilidade e auditoria. Sua ausência ou adulteração impede investigação de incidentes.</td></tr>
+  <tr><td>5</td><td>Código-fonte (JavaScript)</td><td>Contém regras de negócio, credenciais e lógica de controle de acesso. Visível a qualquer usuário via DevTools.</td></tr>
+  <tr><td>6</td><td>Dados exportados (JSON/CSV)</td><td>Contêm o conjunto completo de ocorrências e, na versão original, também credenciais. Exportação sem controle é um risco crítico.</td></tr>
+  <tr><td>7</td><td>localStorage do navegador</td><td>Armazena todos os dados da aplicação. Pode ser lido, modificado ou apagado pelo próprio usuário ou por scripts maliciosos.</td></tr>
+</table>
+
+<!-- 5. CLASSIFICAÇÃO -->
+<div class="quebra"></div>
+<h2>5. Classificação dos Dados e Ativos</h2>
+<table class="analise">
+  <tr><th>#</th><th>Dado ou ativo</th><th>Classificação</th><th>Justificativa</th></tr>
+  <tr><td>1</td><td>CPF do aluno</td><td>Restrito</td><td>Dado pessoal sensível conforme LGPD. Deve ser coletado apenas quando necessário e nunca exibido sem mascaramento.</td></tr>
+  <tr><td>2</td><td>Descrição de ocorrência de saúde ou familiar</td><td>Restrito</td><td>Dado sensível. Revelação indevida pode causar dano moral ao aluno e violar sua privacidade.</td></tr>
+  <tr><td>3</td><td>Credenciais (usuário/senha)</td><td>Restrito</td><td>Acesso indevido compromete toda a segurança do sistema. Jamais devem ser expostas.</td></tr>
+  <tr><td>4</td><td>Logs de ações</td><td>Confidencial</td><td>Contêm informações de comportamento dos usuários. Acesso deve ser restrito a administradores.</td></tr>
+  <tr><td>5</td><td>Nome e matrícula do aluno</td><td>Interno</td><td>Necessários para identificar ocorrências, mas não devem ser acessíveis a perfis não autorizados.</td></tr>
+  <tr><td>6</td><td>Tipo e gravidade de ocorrência</td><td>Confidencial</td><td>Revelam situações acadêmicas ou disciplinares. Visibilidade deve ser controlada por perfil.</td></tr>
+  <tr><td>7</td><td>Interface do sistema (HTML/CSS)</td><td>Público</td><td>Estrutura visual não contém dados sensíveis e pode ser inspecionada normalmente.</td></tr>
+</table>
+
+<!-- 6. ANÁLISE DE RISCOS -->
+<h2>6. Análise dos Riscos Encontrados</h2>
+<table class="analise">
+  <tr><th>#</th><th>Problema identificado</th><th>Risco associado</th><th>Impacto possível</th></tr>
+  <tr><td>1</td><td>Credenciais hardcoded em texto puro no JavaScript</td><td>Confidencialidade — qualquer usuário pode ver todas as senhas no código-fonte</td><td>Comprometimento total de todas as contas</td></tr>
+  <tr><td>2</td><td>Campo de senha com type="text"</td><td>Confidencialidade — senha visível na tela durante a digitação</td><td>Exposição da senha a observadores físicos</td></tr>
+  <tr><td>3</td><td>Autenticação realizada no front-end</td><td>Autenticidade — pode ser contornada via console do navegador</td><td>Acesso não autorizado ao sistema</td></tr>
+  <tr><td>4</td><td>Sem controle de sessão real (sem token, sem expiração)</td><td>Controle de acesso — sessão aberta indefinidamente</td><td>Acesso por terceiros em dispositivo compartilhado</td></tr>
+  <tr><td>5</td><td>Ausência de controle de acesso por perfil (todas as abas acessíveis)</td><td>Confidencialidade e integridade — aluno acessa logs, exportações e dados de outros</td><td>Violação de privacidade, adulteração de dados</td></tr>
+  <tr><td>6</td><td>Alunos visualizam ocorrências de todos os outros alunos</td><td>Confidencialidade — dados pessoais e sensíveis expostos entre pares</td><td>Violação de privacidade, possível dano moral</td></tr>
+  <tr><td>7</td><td>CPF exibido em texto puro na listagem</td><td>Confidencialidade — dado pessoal sensível desnecessariamente exposto</td><td>Risco de uso indevido do CPF, violação da LGPD</td></tr>
+  <tr><td>8</td><td>Senhas exibidas na aba de usuários</td><td>Confidencialidade crítica — qualquer logado vê todas as senhas</td><td>Comprometimento de todas as contas</td></tr>
+  <tr><td>9</td><td>Exportação JSON inclui lista de usuários com senhas</td><td>Confidencialidade crítica — arquivo baixado contém credenciais</td><td>Vazamento permanente de todas as credenciais</td></tr>
+  <tr><td>10</td><td>Logs armazenados no localStorage (apagáveis pelo usuário)</td><td>Integridade e rastreabilidade — logs não são confiáveis</td><td>Impossibilidade de auditoria de incidentes</td></tr>
+  <tr><td>11</td><td>Qualquer perfil pode apagar todos os logs</td><td>Integridade — aluno pode apagar evidências de suas ações</td><td>Destruição de trilha de auditoria</td></tr>
+  <tr><td>12</td><td>CPF registrado nos logs sem necessidade</td><td>Privacidade — coleta excessiva de dado sensível em registros</td><td>Violação do princípio de minimização de dados (LGPD)</td></tr>
+  <tr><td>13</td><td>Sem validação de formato do CPF</td><td>Integridade — dados incorretos comprometem a qualidade dos registros</td><td>Ocorrências com CPF inválido registradas sem aviso</td></tr>
+  <tr><td>14</td><td>Ausência de aviso ao usuário sobre limitações do sistema</td><td>Responsabilidade — usuário pode acreditar que o sistema é seguro</td><td>Uso inadequado com dados reais</td></tr>
+</table>
+
+<!-- 7. MELHORIAS IMPLEMENTADAS -->
+<div class="quebra"></div>
+<h2>7. Melhorias Implementadas no Código</h2>
+<table class="analise">
+  <tr><th>#</th><th>Melhoria implementada</th><th>Arquivo</th><th>O que mudou</th></tr>
+  <tr><td>1</td><td>Campo de senha alterado para type="password"</td><td>index.html (melhorado)</td><td>Senha ocultada durante digitação</td></tr>
+  <tr><td>2</td><td>Aviso de sistema didático no login e no sistema</td><td>index.html (melhorado)</td><td>Usuário informado das limitações</td></tr>
+  <tr><td>3</td><td>Senhas substituídas por hashes simulados (btoa)</td><td>app.js (melhorado)</td><td>Senhas não ficam em texto puro no código</td></tr>
+  <tr><td>4</td><td>Controle de permissões centralizado por perfil (RBAC)</td><td>app.js (melhorado)</td><td>Objeto PERMISSOES define o que cada perfil pode fazer</td></tr>
+  <tr><td>5</td><td>Menu desabilita abas sem permissão</td><td>index.html + app.js</td><td>Botões disabled para perfis sem acesso</td></tr>
+  <tr><td>6</td><td>Verificação de permissão ao trocar de aba</td><td>app.js (melhorado)</td><td>Acesso negado com log de tentativa</td></tr>
+  <tr><td>7</td><td>Aluno vê apenas suas próprias ocorrências</td><td>app.js (melhorado)</td><td>Filtro por matrícula na renderização</td></tr>
+  <tr><td>8</td><td>CPF mascarado na exibição (***.***.***-XX)</td><td>app.js (melhorado)</td><td>CPF completo não exibido na listagem</td></tr>
+  <tr><td>9</td><td>Aba de usuários não exibe senhas</td><td>app.js (melhorado)</td><td>Hash removido da renderização dos cards</td></tr>
+  <tr><td>10</td><td>Exportação JSON sem dados de usuários/senhas</td><td>app.js (melhorado)</td><td>Exporta apenas ocorrências e metadados</td></tr>
+  <tr><td>11</td><td>CSV exportado sem coluna CPF</td><td>app.js (melhorado)</td><td>Minimização de dados na exportação</td></tr>
+  <tr><td>12</td><td>Limpeza de logs restrita a admin</td><td>app.js (melhorado)</td><td>Verificação de perfil antes de apagar</td></tr>
+  <tr><td>13</td><td>Timeout de sessão simulado (10 minutos)</td><td>app.js (melhorado)</td><td>Logout automático após inatividade</td></tr>
+  <tr><td>14</td><td>Validação completa dos campos obrigatórios</td><td>app.js (melhorado)</td><td>Campos marcados visualmente, cadastro bloqueado se incompleto</td></tr>
+  <tr><td>15</td><td>Validação de formato CPF (algoritmo oficial)</td><td>app.js (melhorado)</td><td>CPF inválido detectado e informado ao usuário</td></tr>
+  <tr><td>16</td><td>Escape de HTML para prevenir XSS</td><td>app.js (melhorado)</td><td>Conteúdo inserido pelo usuário não é interpretado como HTML</td></tr>
+  <tr><td>17</td><td>CPF removido dos logs (minimização)</td><td>app.js (melhorado)</td><td>Log registra apenas matrícula, não CPF</td></tr>
+  <tr><td>18</td><td>Logs incluem perfil do usuário</td><td>app.js (melhorado)</td><td>Melhor rastreabilidade de quem fez cada ação</td></tr>
+</table>
+
+<!-- 8. TABELA PRINCIPAL -->
+<div class="quebra"></div>
+<h2>8. Relação entre Problema, Risco, Controle e Justificativa</h2>
+<table class="analise">
+  <tr><th>#</th><th>Item analisado</th><th>Risco associado</th><th>Controle ou melhoria proposta</th><th>Implementado?</th></tr>
+  <tr><td>1</td><td>Credenciais hardcoded no JS</td><td>Confidencialidade crítica</td><td>Remover credenciais do front-end; autenticação real no servidor</td><td><span class="badge parc">Parcialmente</span></td></tr>
+  <tr><td>2</td><td>Campo senha type="text"</td><td>Confidencialidade</td><td>Alterar para type="password"</td><td><span class="badge sim">Sim</span></td></tr>
+  <tr><td>3</td><td>Autenticação no front-end</td><td>Autenticidade / controle</td><td>Autenticação real com servidor e token JWT</td><td><span class="badge back">Depende de back-end</span></td></tr>
+  <tr><td>4</td><td>Sem controle de sessão</td><td>Controle de acesso</td><td>Timeout simulado; em produção: sessão no servidor</td><td><span class="badge parc">Parcialmente</span></td></tr>
+  <tr><td>5</td><td>Sem controle de acesso por perfil</td><td>Confidencialidade / integridade</td><td>RBAC com objeto de permissões; verificação em cada ação</td><td><span class="badge sim">Sim</span></td></tr>
+  <tr><td>6</td><td>Aluno vê dados de outros alunos</td><td>Confidencialidade / LGPD</td><td>Filtrar ocorrências por matrícula do aluno logado</td><td><span class="badge sim">Sim</span></td></tr>
+  <tr><td>7</td><td>CPF exibido em texto puro</td><td>Privacidade / LGPD</td><td>Mascarar CPF na exibição</td><td><span class="badge sim">Sim</span></td></tr>
+  <tr><td>8</td><td>Senhas exibidas na aba de usuários</td><td>Confidencialidade crítica</td><td>Remover exibição de senhas; nunca exibir credenciais</td><td><span class="badge sim">Sim</span></td></tr>
+  <tr><td>9</td><td>Exportação inclui senhas</td><td>Confidencialidade crítica</td><td>Exportar apenas ocorrências, sem dados de usuários</td><td><span class="badge sim">Sim</span></td></tr>
+  <tr><td>10</td><td>Logs no localStorage (apagáveis)</td><td>Integridade / rastreabilidade</td><td>Logs persistentes em servidor; no front-end: simulação com aviso</td><td><span class="badge back">Depende de back-end</span></td></tr>
+  <tr><td>11</td><td>Qualquer perfil apaga logs</td><td>Integridade / auditoria</td><td>Limpar logs restrito a admin com confirmação</td><td><span class="badge sim">Sim</span></td></tr>
+  <tr><td>12</td><td>CPF em logs (excesso de dado)</td><td>Privacidade / LGPD</td><td>Remover CPF dos logs; registrar apenas matrícula</td><td><span class="badge sim">Sim</span></td></tr>
+  <tr><td>13</td><td>Sem validação de CPF</td><td>Integridade de dados</td><td>Validação pelo algoritmo oficial do CPF</td><td><span class="badge sim">Sim</span></td></tr>
+  <tr><td>14</td><td>Sem aviso de limitações ao usuário</td><td>Responsabilidade</td><td>Adicionar banner de aviso sobre natureza do sistema</td><td><span class="badge sim">Sim</span></td></tr>
+  <tr><td>15</td><td>Ausência de proteção HTTPS</td><td>Confidencialidade em trânsito</td><td>Publicar via GitHub Pages (HTTPS nativo) ou servidor com TLS</td><td><span class="badge infra">Depende de infraestrutura</span></td></tr>
+  <tr><td>16</td><td>Sem proteção contra XSS</td><td>Integridade / injeção</td><td>Escape de HTML em toda saída gerada por entrada do usuário</td><td><span class="badge sim">Sim</span></td></tr>
+</table>
+
+<!-- 9. JUSTIFICATIVAS TÉCNICAS -->
+<div class="quebra"></div>
+<h2>9. Justificativa Técnica das Decisões</h2>
+
+<h3>Item 1 — Credenciais hardcoded</h3>
+<p><strong>Problema:</strong> As senhas de todos os usuários estavam em texto puro no array <code>usuarios</code> no JavaScript. Como qualquer arquivo JS é acessível via DevTools, qualquer visitante pode ver todas as credenciais.</p>
+<p><strong>Risco:</strong> Violação total de confidencialidade. Conceito relacionado: exposição indevida de informações no front-end.</p>
+<p><strong>Controle:</strong> Na versão melhorada, as senhas foram substituídas por codificação Base64 (btoa) — apenas para fins didáticos, representando o conceito de "não armazenar em texto puro". Em produção, senhas devem ser armazenadas no servidor com hash bcrypt e jamais chegar ao front-end.</p>
+<p><strong>Limitação:</strong> A solução continua sendo front-end. Base64 não é criptografia — é apenas uma codificação. A solução real depende de back-end.</p>
+
+<h3>Item 2 — Campo senha type="text"</h3>
+<p><strong>Problema:</strong> O campo de senha estava com <code>type="text"</code>, exibindo a senha em texto visível durante a digitação.</p>
+<p><strong>Risco:</strong> Confidencialidade — exposição por observação direta (shoulder surfing).</p>
+<p><strong>Controle implementado:</strong> Alterado para <code>type="password"</code>. Correção simples e efetiva no front-end.</p>
+
+<h3>Item 3 — Autenticação no front-end</h3>
+<p><strong>Problema:</strong> A verificação de credenciais ocorre inteiramente no JavaScript. Um usuário pode abrir o console e executar <code>usuarioAtual = usuarios[0]</code> para se autenticar como admin sem saber a senha.</p>
+<p><strong>Risco:</strong> Violação de autenticidade. Qualquer regra de acesso é contornável.</p>
+<p><strong>Controle:</strong> Autenticação real exige servidor que receba credenciais, valide contra banco de dados e retorne token (ex: JWT). Impossível de resolver apenas no front-end.</p>
+
+<h3>Item 4 — Ausência de controle de sessão</h3>
+<p><strong>Problema:</strong> Após login, o sistema não expira a sessão. Em dispositivos compartilhados, outro usuário pode acessar os dados do anterior.</p>
+<p><strong>Risco:</strong> Controle de acesso, confidencialidade.</p>
+<p><strong>Controle implementado:</strong> Timeout de 10 minutos simulado via <code>setTimeout</code>. Em produção, o controle de sessão deve ocorrer no servidor com tokens com tempo de expiração.</p>
+
+<h3>Item 5 — Controle de acesso por perfil (RBAC)</h3>
+<p><strong>Problema:</strong> Todos os perfis acessavam todas as funcionalidades indistintamente.</p>
+<p><strong>Risco:</strong> Confidencialidade, integridade, violação do princípio do menor privilégio.</p>
+<p><strong>Controle implementado:</strong> Objeto centralizado <code>PERMISSOES</code> mapeia cada perfil às suas permissões. Todas as funções verificam <code>temPermissao()</code> antes de executar. Menu desabilita botões sem acesso. Conceito: RBAC (Role-Based Access Control).</p>
+<p><strong>Limitação:</strong> Verificação ocorre no front-end e pode ser contornada via console. Em produção, o servidor deve validar permissões em cada requisição.</p>
+
+<h3>Item 6 — Aluno vê ocorrências de todos</h3>
+<p><strong>Problema:</strong> A função de renderização exibia todas as ocorrências sem filtro por perfil.</p>
+<p><strong>Risco:</strong> Confidencialidade, violação da LGPD (acesso a dados pessoais de terceiros sem necessidade).</p>
+<p><strong>Controle implementado:</strong> Filtro por matrícula: alunos veem apenas ocorrências onde <code>matricula === usuarioAtual.matricula</code>. Princípio aplicado: menor privilégio e minimização de dados.</p>
+
+<h3>Itens 7, 8 e 9 — Exposição de CPF e senhas</h3>
+<p><strong>Problema:</strong> CPF exibido completo, senhas visíveis na aba de usuários e incluídas na exportação JSON.</p>
+<p><strong>Risco:</strong> Confidencialidade crítica, violação da LGPD (dados pessoais sensíveis).</p>
+<p><strong>Controles implementados:</strong> CPF mascarado (<code>***.***.***-XX</code>); senhas removidas da renderização de usuários; exportação JSON restrita a ocorrências (sem array de usuários).</p>
+
+<h3>Itens 10 e 11 — Logs no localStorage e apagáveis por qualquer perfil</h3>
+<p><strong>Problema:</strong> Logs armazenados localmente podem ser apagados pelo próprio usuário, eliminando a trilha de auditoria.</p>
+<p><strong>Risco:</strong> Rastreabilidade, integridade. Sem logs confiáveis, incidentes não podem ser investigados.</p>
+<p><strong>Controle parcial:</strong> Ação de limpar logs restrita ao perfil admin, com confirmação obrigatória. Um log da própria limpeza é registrado antes. A solução definitiva depende de back-end com logs persistentes e imutáveis.</p>
+
+<h3>Item 16 — Proteção contra XSS</h3>
+<p><strong>Problema:</strong> Conteúdos digitados pelo usuário eram inseridos diretamente no innerHTML sem sanitização, permitindo injeção de HTML e scripts (Cross-Site Scripting).</p>
+<p><strong>Risco:</strong> Integridade, possível roubo de dados via script malicioso.</p>
+<p><strong>Controle implementado:</strong> Função <code>escHTML()</code> que usa <code>document.createElement</code> + <code>textContent</code> para escapar todo conteúdo antes de inserir no DOM.</p>
+
+<!-- 10. MELHORIAS QUE DEPENDEM DE BACK-END -->
+<div class="quebra"></div>
+<h2>10. Melhorias que Dependeriam de Back-end, Banco de Dados ou Infraestrutura</h2>
+<table class="analise">
+  <tr><th>#</th><th>Melhoria necessária</th><th>Depende de quê?</th><th>Por que não pode ser resolvida só no front-end?</th></tr>
+  <tr><td>1</td><td>Autenticação real</td><td>Back-end</td><td>Credenciais no front-end são sempre visíveis e contornáveis via console</td></tr>
+  <tr><td>2</td><td>Autorização por perfil confiável</td><td>Back-end</td><td>Verificações no JS podem ser manipuladas pelo usuário</td></tr>
+  <tr><td>3</td><td>Armazenamento centralizado de dados</td><td>Banco de dados</td><td>localStorage é por navegador, apagável, sem integridade garantida</td></tr>
+  <tr><td>4</td><td>Logs persistentes e imutáveis</td><td>Back-end + BD</td><td>localStorage pode ser apagado; logs confiáveis exigem servidor</td></tr>
+  <tr><td>5</td><td>Controle de sessão com token JWT</td><td>Back-end</td><td>Tokens com expiração real e revogação exigem servidor</td></tr>
+  <tr><td>6</td><td>Hash de senhas com bcrypt</td><td>Back-end</td><td>btoa() não é criptografia; hash seguro exige processamento no servidor</td></tr>
+  <tr><td>7</td><td>Proteção em trânsito (HTTPS/TLS)</td><td>Infraestrutura</td><td>Certificado TLS é gerenciado por servidor/provedor de hospedagem</td></tr>
+  <tr><td>8</td><td>Backup dos dados</td><td>Infraestrutura</td><td>localStorage não tem backup; dados podem ser perdidos ao limpar o navegador</td></tr>
+  <tr><td>9</td><td>Proteção contra força bruta no login</td><td>Back-end</td><td>Rate limiting e bloqueio de IP exigem servidor</td></tr>
+</table>
+
+<!-- 11. LIMITAÇÕES DA SOLUÇÃO -->
+<h2>11. Limitações da Solução Entregue</h2>
+<div class="negativo">
+  Mesmo após as melhorias implementadas, as seguintes limitações permanecem:
+</div>
+<ul>
+  <li><strong>Autenticação simulada:</strong> qualquer usuário com conhecimento de JavaScript pode contornar o login via console do navegador;</li>
+  <li><strong>Sem banco de dados:</strong> dados ficam no localStorage, sem integridade, sem backup e limitados ao navegador de cada usuário;</li>
+  <li><strong>Logs não confiáveis:</strong> mesmo restritos a admin, os logs podem ser manipulados diretamente no localStorage via DevTools;</li>
+  <li><strong>Controle de acesso contornável:</strong> as verificações de perfil estão no JavaScript e podem ser neutralizadas no console;</li>
+  <li><strong>Senhas "codificadas" (btoa) não são seguras:</strong> Base64 é reversível trivialmente; a melhoria é apenas conceitual;</li>
+  <li><strong>Sem HTTPS garantido:</strong> em servidor local, dados trafegam sem criptografia;</li>
+  <li><strong>Sem proteção contra força bruta:</strong> não há limitação de tentativas de login.</li>
+</ul>
+
+<!-- 12. CONCLUSÃO -->
+<div class="quebra"></div>
+<h2>12. Conclusão</h2>
+<h3>O sistema, da forma como foi recebido originalmente, poderia ser usado em produção com dados reais?</h3>
+<div class="negativo">
+  <strong>Não.</strong> O sistema, em sua versão original, não reúne condições mínimas de segurança para uso com dados reais de alunos e funcionários.
+</div>
+<p>Os problemas identificados comprometem todos os pilares fundamentais da Segurança da Informação:</p>
+<ul>
+  <li><strong>Confidencialidade:</strong> senhas em texto puro, CPF exposto, qualquer aluno vê dados de colegas, exportação com credenciais;</li>
+  <li><strong>Integridade:</strong> dados armazenados em localStorage podem ser alterados diretamente, logs apagáveis por qualquer perfil;</li>
+  <li><strong>Disponibilidade:</strong> sem servidor e sem backup, dados podem ser perdidos definitivamente;</li>
+  <li><strong>Autenticidade:</strong> autenticação contornável via console do navegador;</li>
+  <li><strong>Rastreabilidade:</strong> logs não são confiáveis e podem ser adulterados ou destruídos;</li>
+  <li><strong>LGPD:</strong> CPF coletado e exposto sem necessidade, sem controle de acesso adequado, sem responsável técnico pelo dado.</li>
+</ul>
+
+<p>A versão melhorada entregue neste trabalho representa avanços relevantes dentro das limitações do escopo front-end: controle de acesso por perfil (RBAC), mascaramento de CPF, proteção contra XSS, timeout de sessão simulado, validação de dados e minimização de dados nos logs e exportações. Contudo, essas melhorias têm caráter parcial e didático.</p>
+
+<p><strong>Para que o sistema pudesse ser considerado apto para uso em produção, seriam necessários, no mínimo:</strong></p>
+<ul>
+  <li>Desenvolvimento de back-end com autenticação real (ex: Node.js, Java, Python) e tokens JWT;</li>
+  <li>Banco de dados relacional protegido (PostgreSQL, MySQL) com controle de acesso;</li>
+  <li>Armazenamento de senhas com hash bcrypt no servidor;</li>
+  <li>Logs persistentes e imutáveis no servidor;</li>
+  <li>HTTPS com certificado TLS válido;</li>
+  <li>Política de privacidade e termos de uso em conformidade com a LGPD;</li>
+  <li>Processo formal de revisão de segurança (pentest ou code review) antes do go-live.</li>
+</ul>
+
+<div class="rodape">
+  Segurança da Informação — Engenharia de Software — Centro Universitário Católica SC — 2026<br>
+  Heloísa Rebello Cabral | Turma 5B
+</div>
+
+</body>
+</html>

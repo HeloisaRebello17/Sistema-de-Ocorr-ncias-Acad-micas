@@ -32,4 +32,4 @@ Análise crítica de segurança em um protótipo web de registro de ocorrências
 
 ## Sistema publicado
 
-[Link do GitHub Pages aqui]
+https://heloisarebello17.github.io/Sistema-de-Ocorr-ncias-Acad-micas/

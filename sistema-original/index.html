@@ -52,7 +52,7 @@
     <p class="subtitulo">Instituição Educacional</p>
     <div class="campo"><label>Usuário</label><input type="text" id="login-usuario" placeholder="Digite seu usuário"></div>
     <div class="campo">
-      <!-- VULNERABILIDADE: type="text" expõe a senha visualmente -->
+      <!-- Mostrar senha conforme solicitado pelo usuário -->
       <label>Senha</label><input type="text" id="login-senha" placeholder="Digite sua senha">
     </div>
     <button onclick="fazerLogin()">Entrar</button>
@@ -123,14 +123,19 @@ var logs = JSON.parse(localStorage.getItem("logs") || "[]");
 function fazerLogin() {
   var u=document.getElementById("login-usuario").value.trim();
   var s=document.getElementById("login-senha").value.trim();
-  // VULNERABILIDADE 3: comparação de senha em texto puro no front-end
-  var encontrado=usuarios.find(function(x){return x.usuario===u&&x.senha===s;});
+  document.getElementById("login-erro").style.display="none";
+  var encontrado=null;
+  for(var i=0;i<usuarios.length;i++){
+    if(usuarios[i].usuario===u && usuarios[i].senha===s){
+      encontrado=usuarios[i];
+      break;
+    }
+  }
   if(encontrado){
     usuarioAtual=encontrado;
     document.getElementById("tela-login").classList.remove("ativa");
     document.getElementById("tela-principal").classList.add("ativa");
     document.getElementById("info-usuario-logado").textContent=encontrado.nome+" ("+encontrado.perfil+")";
-    // VULNERABILIDADE 4: sem sessão real, token ou expiração
     registrarLog("LOGIN","Usuário "+encontrado.usuario+" fez login");
     renderizarOcorrencias(); renderizarUsuarios(); renderizarLogs();
   } else { document.getElementById("login-erro").style.display="block"; }

@@ -193,11 +193,14 @@ function atualizarResumo() {
 }
 
 function fazerLogin() {
+  var loginErro = document.getElementById("login-erro");
+  loginErro.textContent = "";
+  loginErro.classList.add("hidden");
   var u = document.getElementById("login-usuario").value.trim();
   var s = document.getElementById("login-senha").value;
   if (!u || !s) {
-    document.getElementById("login-erro").textContent = "Informe usuário e senha.";
-    document.getElementById("login-erro").classList.remove("hidden");
+    loginErro.textContent = "Informe usuário e senha.";
+    loginErro.classList.remove("hidden");
     return;
   }
   // MELHORIA: comparação com hash simulado (btoa)
@@ -208,7 +211,6 @@ function fazerLogin() {
     document.getElementById("tela-login").classList.remove("ativa");
     document.getElementById("tela-principal").classList.add("ativa");
     document.getElementById("info-usuario-logado").textContent = encontrado.nome + " (" + encontrado.perfil + ")";
-    document.getElementById("login-erro").classList.add("hidden");
     iniciarSessao();
     registrarLog("LOGIN", "Autenticado. Perfil: " + encontrado.perfil);
     aplicarPermissoes();
@@ -216,8 +218,8 @@ function fazerLogin() {
     renderizarLogs();
     atualizarResumo();
   } else {
-    document.getElementById("login-erro").textContent = "Credenciais inválidas.";
-    document.getElementById("login-erro").classList.remove("hidden");
+    loginErro.textContent = "Credenciais inválidas.";
+    loginErro.classList.remove("hidden");
     registrarLog("FALHA_LOGIN", "Tentativa inválida para usuário: " + u);
   }
 }

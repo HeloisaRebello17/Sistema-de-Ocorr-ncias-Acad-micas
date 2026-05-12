@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Ocorrências Acadêmicas</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="tela-login" class="tela ativa">
+  <div class="login-box">
+    <h1>Sistema de Ocorrências</h1>
+    <p class="subtitulo">Instituição Educacional</p>
+    <p class="login-notice">
+      ⚠️ Sistema didático — não insira dados reais.
+    </p>
+    <div class="campo"><label>Usuário</label><input type="text" id="login-usuario" placeholder="Digite seu usuário" autocomplete="username"></div>
+    <div class="campo">
+      <label>Senha</label>
+      <!-- MELHORIA: type="password" oculta a senha -->
+      <input type="password" id="login-senha" placeholder="Digite sua senha" autocomplete="current-password">
+    </div>
+    <button onclick="fazerLogin()">Entrar</button>
+    <p id="login-erro" class="erro hidden">Credenciais inválidas.</p>
+  </div>
+</div>
+
+<div id="tela-principal" class="tela">
+  <header>
+    <div>
+      <h2>Sistema de Ocorrências Acadêmicas</h2>
+      <span id="info-usuario-logado" class="header-user"></span>
+    </div>
+    <div class="header-actions">
+      <span id="info-sessao" class="info-sessao"></span>
+      <button onclick="fazerLogout()" class="btn-logout">Sair</button>
+    </div>
+  </header>
+
+  <div class="app-shell">
+    <div class="hero">
+      <div class="hero-top">
+        <div>
+          <h2>Painel de ocorrências acadêmicas</h2>
+          <p>Protótipo didático com permissões por perfil, validação de dados, minimização de exposição e feedback visual mais claro para uso em sala e no relatório.</p>
+        </div>
+        <div class="pill">Modo didático</div>
+      </div>
+      <div class="hero-meta">
+        <span class="pill" id="hero-perfil">Perfil: -</span>
+        <span class="pill" id="hero-acessos">Acesso: restrito por perfil</span>
+      </div>
+    </div>
+
+    <div class="summary-grid">
+      <div class="summary-card">
+        <span class="summary-label">Ocorrências</span>
+        <span class="summary-value" id="resumo-ocorrencias">0</span>
+        <span class="summary-hint">Total armazenado localmente</span>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">Visíveis</span>
+        <span class="summary-value" id="resumo-visiveis">0</span>
+        <span class="summary-hint">De acordo com o perfil atual</span>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">Logs</span>
+        <span class="summary-value" id="resumo-logs">0</span>
+        <span class="summary-hint">Eventos de auditoria locais</span>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">Sessão</span>
+        <span class="summary-value" id="resumo-sessao">--</span>
+        <span class="summary-hint">Encerramento automático em 10 min</span>
+      </div>
+    </div>
+
+    <div class="aviso-banner">
+      ⚠️ <strong>Sistema didático (somente front-end):</strong> Não há autenticação real, servidor ou banco de dados. Nenhum dado é enviado a servidores externos. Não insira dados reais de alunos ou funcionários.
+    </div>
+
+    <nav>
+      <button id="btn-aba-ocorrencias" onclick="mostrarAba('aba-ocorrencias',event)" class="ativo">Ocorrências</button>
+      <button id="btn-aba-cadastro" onclick="mostrarAba('aba-cadastro',event)">Cadastrar</button>
+      <button id="btn-aba-usuarios" onclick="mostrarAba('aba-usuarios',event)">Usuários</button>
+      <button id="btn-aba-logs" onclick="mostrarAba('aba-logs',event)">Logs</button>
+      <button id="btn-aba-exportar" onclick="mostrarAba('aba-exportar',event)">Exportar</button>
+    </nav>
+
+    <div id="aba-ocorrencias" class="aba ativa section-card">
+      <h3>Ocorrências Registradas</h3>
+      <p class="section-desc">Exibição filtrada por perfil e com dados sensíveis mascarados na interface.</p>
+      <div id="lista-ocorrencias"></div>
+    </div>
+
+    <div id="aba-cadastro" class="aba section-card">
+      <h3>Cadastrar Nova Ocorrência</h3>
+      <p class="section-desc">Todos os campos com * são obrigatórios. CPF é opcional e passa por validação quando informado.</p>
+      <div class="campo"><label>Nome do Aluno *</label><input type="text" id="ocorr-aluno" placeholder="Nome completo" maxlength="100"></div>
+      <div class="campo"><label>CPF (opcional)</label><input type="text" id="ocorr-cpf" placeholder="000.000.000-00" maxlength="14"></div>
+      <div class="campo"><label>Matrícula *</label><input type="text" id="ocorr-matricula" placeholder="Número de matrícula" maxlength="20"></div>
+      <div class="campo"><label>Turma *</label><input type="text" id="ocorr-turma" placeholder="Ex: ES-3A" maxlength="20"></div>
+      <div class="campo"><label>Tipo *</label>
+        <select id="ocorr-tipo">
+          <option value="">Selecione...</option>
+          <option value="disciplinar">Disciplinar</option>
+          <option value="academica">Acadêmica</option>
+          <option value="administrativa">Administrativa</option>
+          <option value="saude">Saúde</option>
+          <option value="familiar">Situação Familiar</option>
+        </select>
+      </div>
+      <div class="campo"><label>Descrição *</label><textarea id="ocorr-descricao" rows="4" placeholder="Descreva a ocorrência..." maxlength="1000"></textarea></div>
+      <div class="campo"><label>Gravidade *</label>
+        <select id="ocorr-gravidade">
+          <option value="baixa">Baixa</option>
+          <option value="media">Média</option>
+          <option value="alta">Alta</option>
+          <option value="critica">Crítica</option>
+        </select>
+      </div>
+      <button onclick="cadastrarOcorrencia()">Salvar Ocorrência</button>
+      <p id="cadastro-msg" class="hidden"></p>
+    </div>
+
+    <div id="aba-usuarios" class="aba section-card">
+      <h3>Perfis de Usuário</h3>
+      <p class="section-desc">Acesso restrito a administradores. Senhas não são exibidas.</p>
+      <div id="lista-usuarios"></div>
+    </div>
+
+    <div id="aba-logs" class="aba section-card">
+      <h3>Log de Ações</h3>
+      <p class="section-desc">Logs armazenados localmente no navegador, com minimização de dados e acesso controlado.</p>
+      <div id="btn-limpar-wrapper"></div>
+      <div id="lista-logs"></div>
+    </div>
+
+    <div id="aba-exportar" class="aba section-card">
+      <h3>Exportar Dados</h3>
+      <p class="section-desc">Exportação restrita a administradores e professores. CPF não é incluído no CSV.</p>
+      <button onclick="exportarDados()" class="btn-margin-right">Exportar JSON</button>
+      <button onclick="exportarCSV()">Exportar CSV (sem CPF)</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// MELHORIA: senhas representadas como hashes simulados (btoa)
+// Em produção real: autenticação no servidor com bcrypt
+var usuariosDB = [
+  { id:1, usuario:"admin",     hashSenha:btoa("admin123"),  nome:"Administrador",     perfil:"admin" },
+  { id:2, usuario:"professor", hashSenha:btoa("prof123"),   nome:"Prof. Carlos Lima",  perfil:"professor" },
+  { id:3, usuario:"aluno",     hashSenha:btoa("aluno123"),  nome:"Maria Souza",        perfil:"aluno", matricula:"2024001", turma:"ES-3A" },
+  { id:4, usuario:"joao",      hashSenha:btoa("joao456"),   nome:"João Ferreira",      perfil:"aluno", matricula:"2024002", turma:"ES-2B" }
+];
+
+var usuarioAtual = null;
+var timerSessao = null;
+var TIMEOUT_MS = 10 * 60 * 1000; // 10 minutos
+var resumoSessaoTimer = null;
+
+var ocorrencias = JSON.parse(localStorage.getItem("ocorrencias_v2") || "[]");
+var logs = JSON.parse(localStorage.getItem("logs_v2") || "[]");
+
+// MELHORIA: controle de permissões centralizado (RBAC)
+var PERMISSOES = {
+  admin:     { cadastrar:true,  verUsuarios:true,  verLogs:true,  exportar:true,  limparLogs:true,  verTodasOcorrencias:true  },
+  professor: { cadastrar:true,  verUsuarios:false, verLogs:false, exportar:true,  limparLogs:false, verTodasOcorrencias:true  },
+  aluno:     { cadastrar:false, verUsuarios:false, verLogs:false, exportar:false, limparLogs:false, verTodasOcorrencias:false }
+};
+
+function pode(acao) {
+  return usuarioAtual && PERMISSOES[usuarioAtual.perfil][acao] === true;
+}
+
+function setTexto(id, valor) {
+  document.getElementById(id).textContent = valor;
+}
+
+function atualizarResumo() {
+  var visiveis = ocorrencias;
+  if (usuarioAtual && !pode("verTodasOcorrencias")) {
+    visiveis = ocorrencias.filter(function(o){ return o.matricula === usuarioAtual.matricula; });
+  }
+  setTexto("resumo-ocorrencias", String(ocorrencias.length));
+  setTexto("resumo-visiveis", String(visiveis.length));
+  setTexto("resumo-logs", String(logs.length));
+  setTexto("hero-perfil", "Perfil: " + (usuarioAtual ? usuarioAtual.perfil : "-"));
+  setTexto("hero-acessos", usuarioAtual ? (pode("verTodasOcorrencias") ? "Acesso ampliado" : "Acesso limitado") : "Acesso restrito por perfil");
+}
+
+function fazerLogin() {
+  var u = document.getElementById("login-usuario").value.trim();
+  var s = document.getElementById("login-senha").value;
+  var loginErro = document.getElementById("login-erro");
+  loginErro.textContent = "";
+  loginErro.classList.add("hidden");
+  if (!u || !s) {
+    loginErro.textContent = "Informe usuário e senha.";
+    loginErro.classList.remove("hidden");
+    return;
+  }
+  // MELHORIA: comparação com hash simulado (btoa)
+  var encontrado = usuariosDB.find(function(x){ return x.usuario===u && x.hashSenha===btoa(s); });
+  if (encontrado) {
+    usuarioAtual = encontrado;
+    document.getElementById("login-senha").value = "";
+    document.getElementById("tela-login").classList.remove("ativa");
+    document.getElementById("tela-principal").classList.add("ativa");
+    document.getElementById("info-usuario-logado").textContent = encontrado.nome + " (" + encontrado.perfil + ")";
+    iniciarSessao();
+    registrarLog("LOGIN", "Autenticado. Perfil: " + encontrado.perfil);
+    aplicarPermissoes();
+    renderizarOcorrencias();
+    renderizarLogs();
+    atualizarResumo();
+  } else {
+    loginErro.textContent = "Credenciais inválidas.";
+    loginErro.classList.remove("hidden");
+    registrarLog("FALHA_LOGIN", "Tentativa inválida para usuário: " + u);
+  }
+}
+
+function iniciarSessao() {
+  if (timerSessao) clearTimeout(timerSessao);
+  timerSessao = setTimeout(function(){
+    alert("Sessão encerrada por inatividade (10 minutos).");
+    fazerLogout();
+  }, TIMEOUT_MS);
+  var expira = new Date(Date.now() + TIMEOUT_MS);
+  document.getElementById("info-sessao").textContent = "Sessão: até " + expira.toLocaleTimeString("pt-BR");
+  setTexto("resumo-sessao", expira.toLocaleTimeString("pt-BR"));
+}
+
+function fazerLogout() {
+  if (timerSessao) clearTimeout(timerSessao);
+  if (resumoSessaoTimer) clearTimeout(resumoSessaoTimer);
+  if (usuarioAtual) registrarLog("LOGOUT", "Sessão encerrada por " + usuarioAtual.usuario);
+  usuarioAtual = null;
+  document.getElementById("info-sessao").textContent = "";
+  setTexto("resumo-sessao", "--");
+  document.getElementById("tela-principal").classList.remove("ativa");
+  document.getElementById("tela-login").classList.add("ativa");
+  document.getElementById("login-usuario").value = "";
+  document.getElementById("login-senha").value = "";
+  document.getElementById("login-erro").classList.add("hidden");
+}
+
+// MELHORIA: menu reflete permissões do perfil
+function aplicarPermissoes() {
+  document.getElementById("btn-aba-cadastro").disabled  = !pode("cadastrar");
+  document.getElementById("btn-aba-usuarios").disabled  = !pode("verUsuarios");
+  document.getElementById("btn-aba-logs").disabled      = !pode("verLogs");
+  document.getElementById("btn-aba-exportar").disabled  = !pode("exportar");
+  if (pode("limparLogs")) {
+    document.getElementById("btn-limpar-wrapper").innerHTML =
+      '<button onclick="limparLogs()" class="btn-danger">Limpar Logs</button>';
+  } else {
+    document.getElementById("btn-limpar-wrapper").innerHTML = "";
+  }
+  if (pode("verUsuarios")) {
+    renderizarUsuarios();
+  } else {
+    document.getElementById("lista-usuarios").innerHTML = "";
+  }
+  if (!pode("verLogs")) {
+    document.getElementById("lista-logs").innerHTML = "";
+  }
+}
+
+// MELHORIA: verificação de permissão ao trocar de aba
+function mostrarAba(id, ev) {
+  var mapa = { "aba-cadastro":"cadastrar","aba-usuarios":"verUsuarios","aba-logs":"verLogs","aba-exportar":"exportar" };
+  var acao = mapa[id];
+  if (acao && !pode(acao)) {
+    alert("Acesso não autorizado para seu perfil.");
+    registrarLog("ACESSO_NEGADO", "Tentativa de acesso à aba " + id);
+    return;
+  }
+  document.querySelectorAll(".aba").forEach(function(a){ a.classList.remove("ativa"); });
+  document.getElementById(id).classList.add("ativa");
+  document.querySelectorAll("nav button").forEach(function(b){ b.classList.remove("ativo"); });
+  ev.target.classList.add("ativo");
+  if (id === "aba-logs") renderizarLogs();
+  iniciarSessao();
+  atualizarResumo();
+}
+
+// MELHORIA: validação de CPF pelo algoritmo oficial
+function validarCPF(cpf) {
+  cpf = cpf.replace(/\D/g, "");
+  if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
+  var soma = 0, r;
+  for (var i=0; i<9; i++) soma += parseInt(cpf[i]) * (10-i);
+  r = 11 - (soma % 11); if (r >= 10) r = 0; if (r !== parseInt(cpf[9])) return false;
+  soma = 0;
+  for (var i=0; i<10; i++) soma += parseInt(cpf[i]) * (11-i);
+  r = 11 - (soma % 11); if (r >= 10) r = 0;
+  return r === parseInt(cpf[10]);
+}
+
+// MELHORIA: escape HTML para prevenir XSS
+function esc(s) { var d=document.createElement("div"); d.textContent=s||""; return d.innerHTML; }
+
+function cadastrarOcorrencia() {
+  if (!pode("cadastrar")) { alert("Sem permissão para cadastrar ocorrências."); return; }
+  var ids = ["ocorr-aluno","ocorr-matricula","ocorr-turma","ocorr-tipo","ocorr-descricao"];
+  var ok = true;
+  var vals = {};
+  ids.forEach(function(id) {
+    var el = document.getElementById(id);
+    el.classList.remove("campo-erro");
+    vals[id] = el.value.trim();
+    if (!vals[id]) { el.classList.add("campo-erro"); ok = false; }
+  });
+  var cpfEl = document.getElementById("ocorr-cpf");
+  var cpf = cpfEl.value.trim();
+  cpfEl.classList.remove("campo-erro");
+  if (cpf && !validarCPF(cpf)) { cpfEl.classList.add("campo-erro"); mostrarMsg("CPF inválido.", "erro"); return; }
+  if (!ok) { mostrarMsg("Preencha todos os campos obrigatórios (*).", "erro"); return; }
+  var nova = {
+    id: Date.now(),
+    aluno: vals["ocorr-aluno"], cpf: cpf,
+    matricula: vals["ocorr-matricula"], turma: vals["ocorr-turma"],
+    tipo: vals["ocorr-tipo"], descricao: vals["ocorr-descricao"],
+    gravidade: document.getElementById("ocorr-gravidade").value,
+    registradoPor: usuarioAtual.usuario, data: new Date().toLocaleString("pt-BR")
+  };
+  ocorrencias.push(nova);
+  localStorage.setItem("ocorrencias_v2", JSON.stringify(ocorrencias));
+  // MELHORIA: log sem CPF (minimização de dados)
+  registrarLog("CADASTRO", "Ocorrência para: " + nova.aluno + " | Matrícula: " + nova.matricula);
+  mostrarMsg("Ocorrência registrada com sucesso!", "sucesso");
+  limparFormularioOcorrencia();
+  renderizarOcorrencias();
+  atualizarResumo();
+  iniciarSessao();
+}
+
+function mostrarMsg(txt, tipo) {
+  var msg = document.getElementById("cadastro-msg");
+  msg.textContent = txt;
+  msg.className = tipo==="sucesso"?"msg-sucesso":"msg-erro";
+  msg.classList.remove("hidden");
+}
+
+function limparFormularioOcorrencia() {
+  ["ocorr-aluno","ocorr-cpf","ocorr-matricula","ocorr-turma","ocorr-descricao"].forEach(function(id) {
+    var el = document.getElementById(id);
+    el.value = "";
+    el.classList.remove("campo-erro");
+  });
+  document.getElementById("ocorr-tipo").value = "";
+  document.getElementById("ocorr-gravidade").value = "baixa";
+}
+
+// MELHORIA: aluno vê apenas suas próprias ocorrências + CPF mascarado
+function renderizarOcorrencias() {
+  var lista = document.getElementById("lista-ocorrencias");
+  var visiveis = ocorrencias;
+  if (usuarioAtual && !pode("verTodasOcorrencias")) {
+    visiveis = ocorrencias.filter(function(o){ return o.matricula === usuarioAtual.matricula; });
+  }
+  if (!visiveis.length) { lista.innerHTML = "<p class='no-results'>Nenhuma ocorrência encontrada.</p>"; atualizarResumo(); return; }
+  function mascaraCPF(cpf) {
+    if (!cpf) return "não informado";
+    return "***.***.***-" + cpf.replace(/\D/g,"").slice(-2);
+  }
+  lista.innerHTML = visiveis.map(function(o){
+    return '<div class="card-ocorrencia gravidade-'+esc(o.gravidade)+'">'+
+      '<div class="titulo">'+esc(o.aluno)+' — '+esc(o.tipo)+'</div>'+
+      '<div class="detalhe">CPF: '+mascaraCPF(o.cpf)+' | Matrícula: '+esc(o.matricula)+' | Turma: '+esc(o.turma)+'</div>'+
+      '<div class="detalhe">'+esc(o.descricao)+'</div>'+
+      '<div class="detalhe detail-spacer">Registrado por: '+esc(o.registradoPor)+' | '+esc(o.data)+'</div>'+
+    '</div>';
+  }).join("");
+}
+
+// MELHORIA: usuários sem senhas
+function renderizarUsuarios() {
+  if (!pode("verUsuarios")) return;
+  var lista = document.getElementById("lista-usuarios");
+  lista.innerHTML = usuariosDB.map(function(u){
+    return '<div class="card-usuario"><span class="badge badge-'+u.perfil+'">'+u.perfil.toUpperCase()+'</span>'+
+      '<div><strong>'+esc(u.nome)+'</strong><br><span class="user-login-text">Login: '+esc(u.usuario)+
+      (u.matricula?' | Matrícula: '+esc(u.matricula):'')+
+      (u.turma?' | Turma: '+esc(u.turma):'')+
+      '</span></div></div>';
+  }).join("");
+}
+
+function registrarLog(tipo, msg) {
+  var entrada = { tipo:tipo, msg:msg,
+    usuario: usuarioAtual ? usuarioAtual.usuario : "sistema",
+    perfil:  usuarioAtual ? usuarioAtual.perfil  : "-",
+    data: new Date().toLocaleString("pt-BR") };
+  logs.push(entrada);
+  localStorage.setItem("logs_v2", JSON.stringify(logs));
+}
+
+function renderizarLogs() {
+  if (!pode("verLogs")) return;
+  var lista = document.getElementById("lista-logs");
+  if (!logs.length) { lista.innerHTML = "<p class='no-results'>Nenhum log registrado.</p>"; return; }
+  lista.innerHTML = logs.slice().reverse().map(function(l){
+    return '<div class="log-item">['+esc(l.data)+'] ['+esc(l.tipo)+'] ['+esc(l.perfil)+'] '+esc(l.usuario)+': '+esc(l.msg)+'</div>';
+  }).join("");
+}
+
+// MELHORIA: limpeza de logs restrita a admin + confirmação
+function limparLogs() {
+  if (!pode("limparLogs")) { alert("Sem permissão."); return; }
+  if (!confirm("Confirma a limpeza de todos os logs? Esta ação não pode ser desfeita.")) return;
+  registrarLog("LIMPAR_LOGS", "Logs apagados por " + usuarioAtual.usuario);
+  logs = []; localStorage.setItem("logs_v2", JSON.stringify(logs)); renderizarLogs();
+}
+
+// MELHORIA: exportação restrita, sem dados de usuários/senhas
+function exportarDados() {
+  if (!pode("exportar")) { alert("Sem permissão para exportar dados."); return; }
+  var dados = { ocorrencias: ocorrencias, exportadoPor: usuarioAtual.usuario, data: new Date().toLocaleString("pt-BR") };
+  var blob = new Blob([JSON.stringify(dados,null,2)],{type:"application/json"});
+  var a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+  a.download = "ocorrencias.json"; a.click();
+  registrarLog("EXPORTAR", "Exportação JSON por " + usuarioAtual.usuario);
+}
+
+// MELHORIA: CSV sem CPF
+function exportarCSV() {
+  if (!pode("exportar")) { alert("Sem permissão para exportar dados."); return; }
+  var linhas = ["id,aluno,matricula,turma,tipo,gravidade,registradoPor,data"];
+  ocorrencias.forEach(function(o){
+    linhas.push([o.id,'"'+o.aluno+'"',o.matricula,o.turma,o.tipo,o.gravidade,o.registradoPor,'"'+o.data+'"'].join(","));
+  });
+  var blob = new Blob([linhas.join("\n")],{type:"text/csv"});
+  var a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+  a.download = "ocorrencias_sem_cpf.csv"; a.click();
+  registrarLog("EXPORTAR", "Exportação CSV (sem CPF) por " + usuarioAtual.usuario);
+}
+</script>
+</body>
+</html>

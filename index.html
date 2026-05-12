@@ -317,13 +317,18 @@ function cadastrarOcorrencia() {
     if (!vals[id]) { el.classList.add("campo-erro"); ok = false; }
   });
   var cpfEl = document.getElementById("ocorr-cpf");
-  var cpf = cpfEl.value.trim();
+  var cpfRaw = cpfEl.value || "";
+  var cpf = cpfRaw.trim();
+  // normalizar para apenas dígitos antes de validar/armazenar
+  var cpfDigits = cpf.replace(/\D/g, "");
   cpfEl.classList.remove("campo-erro");
-  if (cpf && !validarCPF(cpf)) { cpfEl.classList.add("campo-erro"); mostrarMsg("CPF inválido.", "erro"); return; }
+  if (cpfDigits) {
+    if (!validarCPF(cpfDigits)) { cpfEl.classList.add("campo-erro"); mostrarMsg("CPF inválido.", "erro"); return; }
+  }
   if (!ok) { mostrarMsg("Preencha todos os campos obrigatórios (*).", "erro"); return; }
   var nova = {
     id: Date.now(),
-    aluno: vals["ocorr-aluno"], cpf: cpf,
+    aluno: vals["ocorr-aluno"], cpf: (cpfDigits || ""),
     matricula: vals["ocorr-matricula"], turma: vals["ocorr-turma"],
     tipo: vals["ocorr-tipo"], descricao: vals["ocorr-descricao"],
     gravidade: document.getElementById("ocorr-gravidade").value,
@@ -366,8 +371,10 @@ function renderizarOcorrencias() {
   }
   if (!visiveis.length) { lista.innerHTML = "<p class='no-results'>Nenhuma ocorrência encontrada.</p>"; atualizarResumo(); return; }
   function mascaraCPF(cpf) {
-    if (!cpf) return "não informado";
-    return "***.***.***-" + cpf.replace(/\D/g,"").slice(-2);
+      if (!cpf) return "não informado";
+      var d = String(cpf).replace(/\D/g, "");
+      if (d.length !== 11) return "inválido";
+      return "***.***.***-" + d.slice(-2);
   }
   lista.innerHTML = visiveis.map(function(o){
     return '<div class="card-ocorrencia gravidade-'+esc(o.gravidade)+'">'+

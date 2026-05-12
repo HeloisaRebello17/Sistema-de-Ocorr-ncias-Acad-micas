@@ -263,6 +263,13 @@ document.addEventListener('DOMContentLoaded', function(){
   var logoutBtn = document.getElementById('session-logout');
   if (keep) keep.addEventListener('click', function(){ hideSessionModal(); iniciarSessao(); registrarLog('SESSAO_EXTENDIDA', 'Sessão estendida pelo usuário'); });
   if (logoutBtn) logoutBtn.addEventListener('click', function(){ hideSessionModal(); fazerLogout(); });
+  // permitir somente números no campo de matrícula
+  var mat = document.getElementById('ocorr-matricula');
+  if (mat) {
+    mat.setAttribute('inputmode','numeric');
+    mat.setAttribute('pattern','[0-9]*');
+    mat.addEventListener('input', function(){ this.value = this.value.replace(/\D/g,''); });
+  }
 });
 
 function fazerLogout() {
@@ -346,6 +353,13 @@ function cadastrarOcorrencia() {
     vals[id] = el.value.trim();
     if (!vals[id]) { el.classList.add("campo-erro"); ok = false; }
   });
+  // garantir que matrícula seja apenas dígitos
+  if (vals['ocorr-matricula']) {
+    vals['ocorr-matricula'] = vals['ocorr-matricula'].replace(/\D/g, '');
+    var matEl = document.getElementById('ocorr-matricula');
+    if (matEl) matEl.value = vals['ocorr-matricula'];
+  }
+
   var cpfEl = document.getElementById("ocorr-cpf");
   var cpfRaw = cpfEl.value || "";
   var cpf = cpfRaw.trim();

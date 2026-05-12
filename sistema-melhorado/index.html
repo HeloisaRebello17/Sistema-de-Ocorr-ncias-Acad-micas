@@ -147,6 +147,18 @@
   </div>
 </div>
 
+<!-- Sessão modal (não-bloqueante) -->
+<div id="session-backdrop" class="modal-backdrop" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="session-title">
+    <h3 id="session-title">Sessão expirada</h3>
+    <p id="session-msg">Sua sessão expirou por inatividade. Clique "Voltar" para continuar ou "Sair agora" para encerrar a sessão.</p>
+    <div class="modal-actions">
+      <button id="session-keep" class="btn-secondary">Voltar</button>
+      <button id="session-logout" class="btn-primary">Sair agora</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // MELHORIA: senhas representadas como hashes simulados (btoa)
 // Em produção real: autenticação no servidor com bcrypt
@@ -227,13 +239,31 @@ function fazerLogin() {
 function iniciarSessao() {
   if (timerSessao) clearTimeout(timerSessao);
   timerSessao = setTimeout(function(){
-    alert("Sessão encerrada por inatividade (10 minutos).");
-    fazerLogout();
+    // mostrar modal não-bloqueante
+    showSessionModal();
   }, TIMEOUT_MS);
   var expira = new Date(Date.now() + TIMEOUT_MS);
   document.getElementById("info-sessao").textContent = "Sessão: até " + expira.toLocaleTimeString("pt-BR");
   setTexto("resumo-sessao", expira.toLocaleTimeString("pt-BR"));
 }
+
+function showSessionModal() {
+  var bd = document.getElementById('session-backdrop');
+  bd.classList.add('active'); bd.setAttribute('aria-hidden','false');
+}
+
+function hideSessionModal() {
+  var bd = document.getElementById('session-backdrop');
+  bd.classList.remove('active'); bd.setAttribute('aria-hidden','true');
+}
+
+// configurar botões do modal
+document.addEventListener('DOMContentLoaded', function(){
+  var keep = document.getElementById('session-keep');
+  var logoutBtn = document.getElementById('session-logout');
+  if (keep) keep.addEventListener('click', function(){ hideSessionModal(); iniciarSessao(); registrarLog('SESSAO_EXTENDIDA', 'Sessão estendida pelo usuário'); });
+  if (logoutBtn) logoutBtn.addEventListener('click', function(){ hideSessionModal(); fazerLogout(); });
+});
 
 function fazerLogout() {
   if (timerSessao) clearTimeout(timerSessao);

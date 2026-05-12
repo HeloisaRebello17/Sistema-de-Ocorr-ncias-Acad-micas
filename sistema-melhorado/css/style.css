@@ -22,8 +22,7 @@ body {
 }
 .tela { display: none; }
 .tela.ativa { display: block; }
-#tela-login { min-height: 100vh; align-items: center; justify-content: center; padding: 1.25rem; }
-#tela-login.ativa { display: flex; }
+#tela-login { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1.25rem; }
 .login-box {
   background: rgba(255,255,255,0.96);
   padding: 2rem;
